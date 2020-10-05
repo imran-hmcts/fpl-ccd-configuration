@@ -2,15 +2,18 @@ const config = require('../config.js');
 const recipients = require('../fixtures/recipients.js');
 const placementHelper = require('../helpers/placement_helper.js');
 const uploadDocumentsHelper = require('../helpers/upload_case_documents_helper.js');
-const mandatoryWithMultipleChildren = require('../fixtures/mandatoryWithMultipleChildren.json');
+const mandatoryWithMultipleChildren = require('../fixtures/caseData/mandatoryWithMultipleChildren.json');
 
 let caseId;
 
 Feature('Case maintenance after submission');
 
-BeforeSuite(async I => caseId = await I.submitNewCaseWithData(mandatoryWithMultipleChildren));
+BeforeSuite(async I => {
+  caseId = await I.submitNewCaseWithData(mandatoryWithMultipleChildren);
+  await I.signIn(config.swanseaLocalAuthorityUserOne);
+});
 
-Before(async I => await I.navigateToCaseDetailsAs(config.swanseaLocalAuthorityUserOne, caseId));
+Before(async I => await I.navigateToCaseDetails(caseId));
 
 Scenario('local authority uploads documents', async (I, caseViewPage, uploadDocumentsEventPage) => {
   await caseViewPage.goToNewActions(config.applicationActions.uploadDocuments);
@@ -36,10 +39,10 @@ Scenario('local authority uploads court bundle', async (I, caseViewPage, uploadD
   await I.completeEvent('Save and continue');
   I.seeEventSubmissionConfirmation(config.applicationActions.uploadDocuments);
   caseViewPage.selectTab(caseViewPage.tabs.documents);
-  I.seeDocument('Court bundle', 'mockFile.txt');
+  I.seeDocument('Court bundle', 'mockFile.txt', '', '', 'Date and time uploaded', 'Uploaded by');
 });
 
-Scenario('local authority provides a statements of service', async (I, caseViewPage, loginPage, addStatementOfServiceEventPage) => {
+Scenario('local authority provides a statements of service', async (I, caseViewPage, addStatementOfServiceEventPage) => {
   await caseViewPage.goToNewActions(config.administrationActions.addStatementOfService);
   await addStatementOfServiceEventPage.enterRecipientDetails(recipients[0]);
   await I.addAnotherElementToCollection();
@@ -83,7 +86,7 @@ Scenario('local authority upload placement application', async (I, caseViewPage,
   await placementEventPage.addApplication(config.testFile);
   await placementEventPage.addSupportingDocument(0, 'Statement of facts', config.testFile);
   await placementEventPage.addConfidentialDocument(0, 'Annex B', config.testFile);
-  await placementEventPage.addOrderOrNotice(0, 'Placement order', config.testNonEmptyPdfFile, 'test note');
+  await placementEventPage.addOrderOrNotice(0, 'Placement order', config.testPdfFile, 'test note');
   await I.completeEvent('Save and continue');
 
   await caseViewPage.goToNewActions(config.administrationActions.placement);

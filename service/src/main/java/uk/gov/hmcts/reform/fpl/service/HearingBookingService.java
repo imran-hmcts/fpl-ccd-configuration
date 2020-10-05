@@ -77,12 +77,13 @@ public class HearingBookingService {
             .orElseThrow(NoHearingBookingException::new);
     }
 
+    //Can be removed in future, see getFirstHearing in CaseData.java
     public Optional<HearingBooking> getFirstHearing(List<Element<HearingBooking>> hearingDetails) {
         return unwrapElements(hearingDetails).stream()
             .min(comparing(HearingBooking::getStartDate));
     }
 
-    public HearingBooking getHearingBookingByUUID(List<Element<HearingBooking>> hearingDetails, UUID elementId) {
+    public static HearingBooking getHearingBookingByUUID(List<Element<HearingBooking>> hearingDetails, UUID elementId) {
         return hearingDetails.stream()
             .filter(hearingBookingElement -> hearingBookingElement.getId().equals(elementId))
             .map(Element::getValue)

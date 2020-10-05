@@ -1,5 +1,5 @@
 const config = require('../config.js');
-const standardDirectionOrder = require('../fixtures/standardDirectionOrder.json');
+const standardDirectionOrder = require('../fixtures/caseData/prepareForHearing.json');
 const cmoHelper = require('../helpers/cmo_helper');
 const dateFormat = require('dateformat');
 
@@ -36,7 +36,7 @@ Scenario('Judge makes changes to agreed CMO and seals', async (I, caseViewPage, 
   await I.retryUntilExists(() => I.click('Continue'), '#reviewCMODecision_decision');
   I.see('mockFile.docx');
   reviewAgreedCaseManagementOrderEventPage.selectMakeChangesToCmo();
-  reviewAgreedCaseManagementOrderEventPage.uploadAmendedCmo(config.testNonEmptyWordFile);
+  reviewAgreedCaseManagementOrderEventPage.uploadAmendedCmo(config.testWordFile);
   await I.completeEvent('Save and continue', {summary: 'Summary', description: 'Description'});
   I.seeEventSubmissionConfirmation(config.applicationActions.reviewAgreedCmo);
   caseViewPage.selectTab(caseViewPage.tabs.orders);
@@ -76,6 +76,8 @@ Scenario('Judge seals and sends the agreed CMO to parties', async (I, caseViewPa
   caseViewPage.selectTab(caseViewPage.tabs.orders);
   assertSealedCMO(I, '1', '1 March 2020');
   assertSealedCMO(I, '2', '1 January 2020');
+  caseViewPage.selectTab(caseViewPage.tabs.documentsSentToParties);
+  assertDocumentSentToParties(I);
 });
 
 const assertDraftCMO = function (I, collectionId, hearingDate, status) {
@@ -99,4 +101,9 @@ const assertSealedCMO = function (I, collectionId, hearingDate) {
   I.seeInTab([sealedCMO, 'Hearing'], `Case management hearing, ${hearingDate}`);
   I.seeInTab([sealedCMO, 'Date issued'], dateFormat(today, 'd mmm yyyy'));
   I.seeInTab([sealedCMO, 'Judge'], 'Her Honour Judge Reed');
+};
+
+const assertDocumentSentToParties = function (I) {
+  I.seeInTab(['Party 1', 'Representative name'], 'Marie Kelly');
+  I.seeInTab(['Party 1', 'Document 1', 'File'], 'mockFile.pdf');
 };

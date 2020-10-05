@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.fpl.enums.CMOStatus;
+import uk.gov.hmcts.reform.fpl.enums.HearingType;
 import uk.gov.hmcts.reform.fpl.enums.State;
 import uk.gov.hmcts.reform.fpl.exceptions.CMONotFoundException;
 import uk.gov.hmcts.reform.fpl.model.CaseData;
@@ -46,15 +47,13 @@ public class ReviewCMOService {
         List<Element<CaseManagementOrder>> cmosReadyForApproval = getCMOsReadyForApproval(caseData);
         Element<CaseManagementOrder> selectedCMO = getSelectedCMO(caseData);
 
-        return asDynamicList(cmosReadyForApproval, selectedCMO.getId(),
-            uk.gov.hmcts.reform.fpl.model.order.CaseManagementOrder::getHearing);
+        return asDynamicList(cmosReadyForApproval, selectedCMO.getId(), CaseManagementOrder::getHearing);
     }
 
     public DynamicList buildUnselectedDynamicList(CaseData caseData) {
         List<Element<CaseManagementOrder>> cmosReadyForApproval = getCMOsReadyForApproval(caseData);
 
-        return asDynamicList(cmosReadyForApproval, null,
-            uk.gov.hmcts.reform.fpl.model.order.CaseManagementOrder::getHearing);
+        return asDynamicList(cmosReadyForApproval, null, CaseManagementOrder::getHearing);
     }
 
     public Map<String, Object> getPageDisplayControls(CaseData caseData) {
@@ -131,15 +130,9 @@ public class ReviewCMOService {
             Optional<HearingBooking> nextHearingBooking = caseData.getNextHearingAfterCmo(cmoID);
 
             if (nextHearingBooking.isPresent()
-                && caseData.getReviewCMODecision().hasReviewOutcomeOf(SEND_TO_ALL_PARTIES)) {
-                switch (nextHearingBooking.get().getType()) {
-                    case ISSUE_RESOLUTION:
-                        return State.ISSUE_RESOLUTION;
-                    case FINAL:
-                        return State.FINAL_HEARING;
-                    default:
-                        return currentState;
-                }
+                && caseData.getReviewCMODecision().hasReviewOutcomeOf(SEND_TO_ALL_PARTIES)
+                && nextHearingBooking.get().isOfType(HearingType.FINAL)) {
+                return State.FINAL_HEARING;
             }
         }
         return currentState;

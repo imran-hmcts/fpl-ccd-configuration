@@ -55,8 +55,18 @@ public class FeatureToggleService {
         return ldClient.boolVariation("new-case-state-model", createLDUser(), false);
     }
 
-    public boolean isMigrateToManageOrgWarningPageEnabled(String localAuthorityName) {
-        return ldClient.boolVariation("migrate-to-manage-org-warning-page",
+    public boolean isAllowCaseCreationForUsersNotOnboardedToMOEnabled(String localAuthorityName) {
+        return ldClient.boolVariation("allow-case-creation-for-users-not-onboarded-to-mo",
+            createLDUser(Map.of("localAuthorityName", LDValue.of(localAuthorityName))), false);
+    }
+
+    public boolean isRestrictedFromCaseSubmission(String localAuthorityName) {
+        return ldClient.boolVariation("restrict-case-submission",
+            createLDUser(Map.of("localAuthorityName", LDValue.of(localAuthorityName))), false);
+    }
+
+    public boolean isSendLAEmailsToSolicitorEnabled(String localAuthorityName) {
+        return ldClient.boolVariation("send-la-emails-to-solicitor",
             createLDUser(Map.of("localAuthorityName", LDValue.of(localAuthorityName))), false);
     }
 

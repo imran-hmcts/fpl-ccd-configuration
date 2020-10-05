@@ -22,6 +22,8 @@ import uk.gov.hmcts.reform.fpl.service.email.content.OrderIssuedEmailContentProv
 import uk.gov.hmcts.reform.fpl.utils.FixedTimeConfiguration;
 import uk.gov.hmcts.reform.fpl.utils.TestDataHelper;
 
+import java.util.Set;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -35,9 +37,7 @@ import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.
 import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.DOCUMENT_CONTENTS;
 import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.LOCAL_AUTHORITY_CODE;
 import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.LOCAL_AUTHORITY_EMAIL_ADDRESS;
-import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.LOCAL_AUTHORITY_NAME;
 import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.expectedRepresentatives;
-import static uk.gov.hmcts.reform.fpl.handlers.NotificationEventHandlerTestData.getCMOIssuedCaseLinkNotificationParameters;
 import static uk.gov.hmcts.reform.fpl.utils.CoreCaseDataStoreLoader.caseData;
 import static uk.gov.hmcts.reform.fpl.utils.OrderIssuedNotificationTestHelper.getExpectedCaseUrlParameters;
 import static uk.gov.hmcts.reform.fpl.utils.TestDataHelper.DOCUMENT_CONTENT;
@@ -82,8 +82,8 @@ class CaseManagementOrderIssuedEventHandlerTest {
         CaseData caseData = caseData();
         CaseManagementOrder cmo = buildCmo();
 
-        given(inboxLookupService.getNotificationRecipientEmail(caseData))
-            .willReturn(LOCAL_AUTHORITY_EMAIL_ADDRESS);
+        given(inboxLookupService.getRecipients(caseData))
+            .willReturn(Set.of(LOCAL_AUTHORITY_EMAIL_ADDRESS));
 
         given(caseManagementOrderEmailContentProvider.buildCMOIssuedNotificationParameters(caseData, cmo,
             DIGITAL_SERVICE))
@@ -97,7 +97,7 @@ class CaseManagementOrderIssuedEventHandlerTest {
 
         verify(notificationService).sendEmail(
             CMO_ORDER_ISSUED_NOTIFICATION_TEMPLATE,
-            LOCAL_AUTHORITY_EMAIL_ADDRESS,
+            Set.of(LOCAL_AUTHORITY_EMAIL_ADDRESS),
             issuedCMOTemplate,
             caseData.getId().toString());
 
@@ -116,10 +116,6 @@ class CaseManagementOrderIssuedEventHandlerTest {
             .sendToCtsc("Yes")
             .build();
         CaseManagementOrder cmo = buildCmo();
-
-        given(caseManagementOrderEmailContentProvider.buildCMOIssuedCaseLinkNotificationParameters(caseData,
-            LOCAL_AUTHORITY_NAME))
-            .willReturn(getCMOIssuedCaseLinkNotificationParameters());
 
         given(orderIssuedEmailContentProvider.buildParametersWithCaseUrl(caseData, DOCUMENT_CONTENTS, CMO))
             .willReturn(getExpectedCaseUrlParameters(CMO.getLabel(), true));

@@ -543,8 +543,7 @@ Scenario('local authority uploads documents @create-case-with-mandatory-sections
 Scenario('local authority cannot upload court bundle', async (I, caseViewPage, uploadDocumentsEventPage) => {
   await caseViewPage.goToNewActions(config.applicationActions.uploadDocuments);
   I.dontSeeElement(uploadDocumentsEventPage.documents.courtBundle);
-  await I.seeCheckAnswersAndCompleteEvent('Save and continue');
-  I.seeEventSubmissionConfirmation(config.applicationActions.uploadDocuments);
+  I.click('Cancel');
 });
 
 Scenario('local authority tries to submit without giving consent', async (I, caseViewPage, submitApplicationEventPage) => {
@@ -555,10 +554,12 @@ Scenario('local authority tries to submit without giving consent', async (I, cas
   I.seeInCurrentUrl('/submitApplication');
 });
 
-Scenario('local authority submits after giving consent @create-case-with-mandatory-sections-only', async (I, caseViewPage, submitApplicationEventPage, paymentHistoryPage) => {
+let feeToPay = '2055'; //Need to remember this between tests.. default in case the test below fails
+
+Scenario('local authority submits after giving consent @create-case-with-mandatory-sections-only', async (I, caseViewPage, submitApplicationEventPage) => {
   await caseViewPage.startTask(config.applicationActions.submitCase);
 
-  const feeToPay = await submitApplicationEventPage.getFeeToPay();
+  feeToPay = await submitApplicationEventPage.getFeeToPay();
   submitApplicationEventPage.seeDraftApplicationFile();
   submitApplicationEventPage.giveConsent();
 
@@ -566,11 +567,13 @@ Scenario('local authority submits after giving consent @create-case-with-mandato
   I.seeEventSubmissionConfirmation(config.applicationActions.submitCase);
   caseViewPage.selectTab(caseViewPage.tabs.documents);
   I.see('New_case_name.pdf');
+});
 
+Scenario('HMCTS admin check the payment', async (I, caseViewPage, paymentHistoryPage) => {
   caseViewPage.checkTabIsNotPresent(caseViewPage.tabs.startApplication);
   caseViewPage.checkTabIsNotPresent(caseViewPage.tabs.viewApplication);
 
   await I.navigateToCaseDetailsAs(config.hmctsAdminUser, caseId);
   caseViewPage.selectTab(caseViewPage.tabs.paymentHistory);
   paymentHistoryPage.checkPayment(feeToPay, applicant.pbaNumber);
-});
+}).retry(1); // retry due to async nature of the payment and the payment could be still processing..

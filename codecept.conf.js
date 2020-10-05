@@ -61,7 +61,6 @@ exports.config = {
     enterAttendingHearingEventPage: './e2e/pages/events/enterAttendingHearingEvent.page.js',
     uploadDocumentsEventPage: './e2e/pages/events/uploadDocumentsEvent.page.js',
     enterFamilyManCaseNumberEventPage: './e2e/pages/events/enterFamilyManCaseNumberEvent.page.js',
-    uploadStandardDirectionsDocumentEventPage: './e2e/pages/events/uploadStandardDirectionsDocumentEvent.page.js',
     sendCaseToGatekeeperEventPage: './e2e/pages/events/sendCaseToGatekeeperEvent.page.js',
     notifyGatekeeperEventPage: './e2e/pages/events/sendCaseToGatekeeperEvent.page.js',
     createNoticeOfProceedingsEventPage: './e2e/pages/events/createNoticeOfProceedingsEvent.page.js',
@@ -70,9 +69,6 @@ exports.config = {
     uploadC2DocumentsEventPage: './e2e/pages/events/uploadC2DocumentsEvent.page.js',
     draftStandardDirectionsEventPage: './e2e/pages/events/draftStandardDirectionsEvent.page.js',
     createOrderEventPage: './e2e/pages/events/createOrderEvent.page.js',
-    complyWithDirectionsEventPage: './e2e/pages/events/complyWithDirectionsEvent.page.js',
-    complyOnBehalfOfOthersEventPage: './e2e/pages/events/complyOnBehalfOfOthersEvent.page.js',
-    actionCaseManagementOrderEventPage: './e2e/pages/events/actionCaseManagementOrderEvent.page.js',
     placementEventPage: './e2e/pages/events/placementEvent.page.js',
     allocatedJudgeEventPage: './e2e/pages/events/enterAllocatedJudgeEvent.page.js',
     handleSupplementaryEvidenceEventPage: './e2e/pages/events/handleSupplementaryEvidenceEvent.page.js',
@@ -85,6 +81,8 @@ exports.config = {
     uploadCaseManagementOrderEventPage: './e2e/pages/events/uploadCaseManagementOrderEvent.page.js',
     reviewAgreedCaseManagementOrderEventPage: './e2e/pages/events/reviewAgreedCaseManagementOrderEvent.page.js',
     removeOrderEventPage: './e2e/pages/events/removeOrderEvent.page.js',
+    manageDocumentsEventPage: './e2e/pages/events/manageDocumentsEvent.page.js',
+    changeCaseStateEventPage: './e2e/pages/events/changeCaseStateEvent.page.js',
   },
   plugins: {
     autoDelay: {

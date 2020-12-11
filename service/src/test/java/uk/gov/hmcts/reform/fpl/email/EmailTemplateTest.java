@@ -5,7 +5,6 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import uk.gov.hmcts.reform.fpl.service.email.NotificationResponsePostProcessor;
 import uk.gov.hmcts.reform.fpl.service.email.NotificationService;
@@ -23,7 +22,6 @@ public class EmailTemplateTest {
     @Autowired
     private RecordNotificationResponsePostProcessor notificationResponsePostProcessor;
 
-    @Configuration
     public static class TestConfiguration {
 
         @Bean
